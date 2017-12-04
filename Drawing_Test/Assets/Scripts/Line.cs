@@ -18,8 +18,11 @@ namespace Assets
         private List<GameObject> _dotsMClone;
 
         float contState;   //controller state
-        public Color color;
-        public float width;
+        public Color originColor;
+        public float originWidth;
+
+        private Color color;
+        private float width;
 
         //for creating mesh
         int vtxIdx;     //vertex Index
@@ -28,6 +31,9 @@ namespace Assets
         List<GameObject> _mesh;
         
         Renderer rend;
+
+        Vector3 curPos; Vector3 pasPos;
+        float speed = 0;
     
         public void Awake()
         {
@@ -49,6 +55,9 @@ namespace Assets
 
             //color = new Color(255, 0, 0);   //temporary fixed
             //width = 0.05f;      //temporary fixed
+
+            curPos = Vector3.zero;
+            pasPos = Vector3.zero;
         }
 
 
@@ -58,8 +67,26 @@ namespace Assets
 
             contRotation = GameObject.FindWithTag("rtouch").transform.rotation;
 
-            if(contState > 0.0f)
+            pasPos = curPos;
+            curPos = GameObject.FindWithTag("rtouch").transform.position;
+
+            speed = (pasPos - curPos).magnitude;
+            //print(speed);
+
+            if (contState > 0.0f)
             {
+
+                if (speed > 0.01f && inputIdx != 0)
+                {
+                    color = new Color(0, 0, 255);
+                    width = originWidth - 0.02f;
+                }
+                else
+                {
+                    color = originColor;
+                    width = originWidth;
+                }
+
                 inputIdx++;
                 
                 if(inputIdx % 5 == 0)
@@ -85,7 +112,6 @@ namespace Assets
                         _mesh[vtxIdx - 1].gameObject.AddComponent<MeshCollider>();
 
                         rend = _mesh[vtxIdx - 1].GetComponent<Renderer>();
-
                         rend.material = new Material(Shader.Find("Transparent/Diffuse"));
                         rend.material.color = color;
 

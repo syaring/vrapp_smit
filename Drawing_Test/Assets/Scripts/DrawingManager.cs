@@ -22,9 +22,7 @@ public class DrawingManager : MonoBehaviour
     Line line;
 
     private void Start()
-    {
-        //lineWidth = 0.05f;
-        //lineColor = new Color(255, 0, 0);
+    { 
         lineIdx = 0;
         _line = new List<Line>();
         go = new GameObject();
@@ -33,9 +31,9 @@ public class DrawingManager : MonoBehaviour
     private void Update()
     {
         stateDraw = OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.RTouch);
- 
         thumbStateR = OVRInput.GetDown(OVRInput.Button.PrimaryThumbstickRight, OVRInput.Controller.RTouch);
         thumbStateL = OVRInput.GetDown(OVRInput.Button.PrimaryThumbstickLeft, OVRInput.Controller.RTouch);
+
 
         if (thumbStateR)
         {
@@ -44,7 +42,8 @@ public class DrawingManager : MonoBehaviour
         }
         if (thumbStateL)
         {
-            lineWidth -= 0.01f;
+            if(lineWidth > 0.0f)
+                lineWidth -= 0.01f;
             //print(lineWidth);
         }
 
@@ -61,8 +60,8 @@ public class DrawingManager : MonoBehaviour
         {
             //drawing line
             line = go.AddComponent<Line>();
-            line.color = lineColor;
-            line.width = lineWidth;
+            line.originColor = lineColor;
+            line.originWidth = lineWidth;
 
             _line.Add(line);
             
