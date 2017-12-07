@@ -21,6 +21,8 @@ namespace Assets
         public Color originColor;
         public float originWidth;
 
+        private GameObject rt;
+
         private Color color;
         private float width;
 
@@ -33,6 +35,7 @@ namespace Assets
         Renderer rend;
 
         Vector3 curPos; Vector3 pasPos;
+        Vector3 heading;
         float speed = 0;
     
         public void Awake()
@@ -40,6 +43,7 @@ namespace Assets
 
             vtxIdx = 0;
             inputIdx = 0;
+            rt = GameObject.FindWithTag("rtouch");
 
             dotsO = GameObject.FindWithTag("dotsO");
             dotsP = GameObject.FindWithTag("dotsP");
@@ -63,14 +67,19 @@ namespace Assets
 
         public void Update()
         {
+
             contState = OVRInput.Get(OVRInput.Axis1D.SecondaryIndexTrigger, OVRInput.Controller.Touch);
 
-            contRotation = GameObject.FindWithTag("rtouch").transform.rotation;
+
+            contRotation = rt.transform.rotation;
+            //GameObject.FindWithTag("rtouch").transform.rotation;
 
             pasPos = curPos;
-            curPos = GameObject.FindWithTag("rtouch").transform.position;
+            curPos = rt.transform.position;
+            //curPos = GameObject.FindWithTag("rtouch").transform.position;
 
-            speed = (pasPos - curPos).magnitude;
+            heading = pasPos - curPos;
+            speed = heading.magnitude;
             //print(speed);
 
             if (contState > 0.0f)
@@ -79,7 +88,7 @@ namespace Assets
                 if (speed > 0.01f && inputIdx != 0)
                 {
                     color = new Color(0, 0, 255);
-                    width = originWidth - 0.02f;
+                    width = originWidth - speed*0.9f;
                 }
                 else
                 {
@@ -89,7 +98,8 @@ namespace Assets
 
                 inputIdx++;
                 
-                if(inputIdx % 5 == 0)
+                //if(inputIdx % 5 == 0)
+                if(inputIdx % 30 == 0)
                 {
                     //position of dotsO
                     originPoint = new Vector3(dotsO.transform.position.x, dotsO.transform.position.y, dotsO.transform.position.z);
@@ -98,6 +108,8 @@ namespace Assets
                     _dotsPClone.Add(Instantiate(dotsP, (originPoint + _dotsOClone[vtxIdx].transform.up * width), contRotation));
                     _dotsMClone.Add(Instantiate(dotsM, (originPoint + _dotsOClone[vtxIdx].transform.up * -width), contRotation));
 
+                    print(heading/speed);
+                    //sprint(speed);
                     _mesh.Add(new GameObject());
 
                     if (vtxIdx > 0)
