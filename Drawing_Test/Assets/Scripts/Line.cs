@@ -6,11 +6,13 @@ namespace Assets
 {
     public class Line : MonoBehaviour
     {
+        //dotsO, dotsP, dotsM will be none visible in the scene
+        //using GUI point's center will be same with dotsO's center
         GameObject dotsO;
         GameObject dotsP;
         GameObject dotsM;
 
-        private Vector3 originPoint;        //position value of dotsO
+        private Vector3 originPoint;      //position value of dotsO
         private Quaternion contRotation;  //rotation value of OVR Controller
 
         private List<GameObject> _dotsOClone;
@@ -37,12 +39,14 @@ namespace Assets
         Vector3 curPos; Vector3 pasPos;
         Vector3 heading;
         float speed = 0;
+        Vector3 curDir; Vector3 pasDir;
     
         public void Awake()
         {
 
             vtxIdx = 0;
             inputIdx = 0;
+
             rt = GameObject.FindWithTag("rtouch");
 
             dotsO = GameObject.FindWithTag("dotsO");
@@ -62,6 +66,9 @@ namespace Assets
 
             curPos = Vector3.zero;
             pasPos = Vector3.zero;
+
+            curDir = Vector3.zero;
+            pasDir = Vector3.zero;
         }
 
 
@@ -72,34 +79,37 @@ namespace Assets
 
 
             contRotation = rt.transform.rotation;
-            //GameObject.FindWithTag("rtouch").transform.rotation;
 
+            //it is more accurate that using dotsO than using controller for standard
             pasPos = curPos;
-            curPos = rt.transform.position;
-            //curPos = GameObject.FindWithTag("rtouch").transform.position;
+            curPos = dotsO.transform.position;
+            //curPos = rt.transform.position;
 
-            heading = pasPos - curPos;
-            speed = heading.magnitude;
-            //print(speed);
+            heading = pasPos - curPos; //drawing direction
+            speed = heading.magnitude;  //drawing speed
 
+            pasDir = curDir;
+            curDir = heading / speed;
+
+            width = originWidth * (1.01f - speed);
+
+            color = originColor;
+
+            //for comfirmation, speed up, color changed blue
+            if (width < originWidth)
+                color = new Color(0, 0, 255);
+
+            //for comfirmation, direction changed, color changed green ... not so much accurate
+            if (curDir.x * pasDir.x < 0 || curDir.y * pasDir.y < 0 || curDir.z * pasDir.z < 0)
+                color = new Color(0, 255, 0);
+
+           
             if (contState > 0.0f)
             {
-
-                if (speed > 0.01f && inputIdx != 0)
-                {
-                    color = new Color(0, 0, 255);
-                    width = originWidth - speed*0.9f;
-                }
-                else
-                {
-                    color = originColor;
-                    width = originWidth;
-                }
-
+                
                 inputIdx++;
                 
-                //if(inputIdx % 5 == 0)
-                if(inputIdx % 30 == 0)
+                if(inputIdx % 5 == 0)
                 {
                     //position of dotsO
                     originPoint = new Vector3(dotsO.transform.position.x, dotsO.transform.position.y, dotsO.transform.position.z);
@@ -108,8 +118,7 @@ namespace Assets
                     _dotsPClone.Add(Instantiate(dotsP, (originPoint + _dotsOClone[vtxIdx].transform.up * width), contRotation));
                     _dotsMClone.Add(Instantiate(dotsM, (originPoint + _dotsOClone[vtxIdx].transform.up * -width), contRotation));
 
-                    print(heading/speed);
-                    //sprint(speed);
+                    //print(curDir);
                     _mesh.Add(new GameObject());
 
                     if (vtxIdx > 0)
@@ -127,6 +136,7 @@ namespace Assets
                         rend.material = new Material(Shader.Find("Transparent/Diffuse"));
                         rend.material.color = color;
 
+                        //modify later...(hold)
                         _mesh[vtxIdx - 1].GetComponent<MeshFilter>().mesh.vertices = new Vector3[] { v1, v2, v3, v4 };
                         _mesh[vtxIdx - 1].GetComponent<MeshFilter>().mesh.uv = new Vector2[] { new Vector2(0, 0), new Vector2(0, 1), new Vector2(1, 1), new Vector2(1, 0) };
                         _mesh[vtxIdx - 1].GetComponent<MeshFilter>().mesh.triangles = new int[] { 0, 1, 2, 3, 2, 1, 2, 1, 0, 1, 2, 3 };
