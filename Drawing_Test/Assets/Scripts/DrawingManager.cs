@@ -64,7 +64,8 @@ public class DrawingManager : MonoBehaviour
             line.originWidth = lineWidth;
 
             _line.Add(line);
-            
+
+            //print("number of line"+_line.Count);
             lineIdx++;
 
         }
