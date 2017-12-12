@@ -40,10 +40,10 @@ namespace Assets
         Vector3 heading;
         float speed = 0;
         Vector3 curDir; Vector3 pasDir;
-    
+        static float angle;
+
         public void Awake()
         {
-
             vtxIdx = 0;
             inputIdx = 0;
 
@@ -85,11 +85,12 @@ namespace Assets
             curPos = dotsO.transform.position;
             //curPos = rt.transform.position;
 
-            heading = pasPos - curPos; //drawing direction
+            heading = curPos - pasPos; //drawing direction
             speed = heading.magnitude;  //drawing speed
-
+  
             pasDir = curDir;
-            curDir = heading / speed;
+            curDir = heading;
+            //curDir = heading.normalized;
 
             width = originWidth * (1.01f - speed);
 
@@ -98,9 +99,14 @@ namespace Assets
             //for comfirmation, speed up, color changed blue
             if (width < originWidth)
                 color = new Color(0, 0, 255);
-
+            
             //for comfirmation, direction changed, color changed green ... not so much accurate
-            if (curDir.x * pasDir.x < 0 || curDir.y * pasDir.y < 0 || curDir.z * pasDir.z < 0)
+            //if (curDir.x * pasDir.x <= 0 || curDir.y * pasDir.y <= 0 || curDir.z * pasDir.z <= 0)
+            
+            //it is more accurate when calculate the angle of two vectors
+            angle = Vector3.Angle(curDir, pasDir);
+        
+            if( angle > 10.0f)
                 color = new Color(0, 255, 0);
 
            
@@ -109,8 +115,9 @@ namespace Assets
                 
                 inputIdx++;
                 
-                if(inputIdx % 5 == 0)
+                if(inputIdx % 3 == 0)
                 {
+                    //print(curDir);
                     //position of dotsO
                     originPoint = new Vector3(dotsO.transform.position.x, dotsO.transform.position.y, dotsO.transform.position.z);
 
