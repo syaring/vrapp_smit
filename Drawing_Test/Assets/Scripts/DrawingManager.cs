@@ -10,7 +10,7 @@ public class DrawingManager : MonoBehaviour
 {
 
     List<Line> _line;
-    GameObject go;
+    //GameObject go;
     int lineIdx;
     float lineWidth = 0.05f;
     Color lineColor = new Color(255, 0, 0);
@@ -25,7 +25,7 @@ public class DrawingManager : MonoBehaviour
     { 
         lineIdx = 0;
         _line = new List<Line>();
-        go = new GameObject();
+        //go = new GameObject();
     }
 
     private void Update()
@@ -59,16 +59,34 @@ public class DrawingManager : MonoBehaviour
         if (stateDraw) 
         {
             //drawing line
-            line = go.AddComponent<Line>();
-            line.originColor = lineColor;
-            line.originWidth = lineWidth;
+            GameObject go = new GameObject("line" + lineIdx);
+            Debug.Log("creat" + lineIdx);
 
-            _line.Add(line);
+
+
+            go.AddComponent<MeshFilter>();
+            go.AddComponent<MeshRenderer>();
+            go.AddComponent<MeshCollider>();
+            //go.transform.parent = line.transform;
+            line = go.AddComponent<Line>();
+
+
+            line.originColor = lineColor;
+            line.originWidth = lineWidth/2;
+
+            //_line.Add(line);
 
             //print("number of line"+_line.Count);
             lineIdx++;
-
+          
         }
+
+        if (Input.GetKeyDown("d"))
+        {
+            //code for delete line from latest
+            Destroy(GameObject.Find("line" + --lineIdx));
+        }
+
     }
 }
 
