@@ -93,7 +93,7 @@ namespace Assets
             //it is more accurate when calculate the angle of two vectors
             angle = Vector3.Angle(curDir, pasDir);
 
-            if (angle > 10.0f)
+            if (angle > 10.0f || angle < -10.0f)
                 color = new Color(0, 255, 0);
 
 
@@ -143,9 +143,14 @@ namespace Assets
 
         }
 
-        public void OnDestroy()
+        public void DestroyMesh()
         {
             //temporary
+            for(int i = 0; i < _dotsOClone.Count; i++)
+            {
+                Destroy(_dotsOClone[i]);
+                Destroy(_mesh[i]);
+            }
         }
     }
 }

@@ -60,9 +60,7 @@ public class DrawingManager : MonoBehaviour
         {
             //drawing line
             GameObject go = new GameObject("line" + lineIdx);
-            Debug.Log("creat" + lineIdx);
-
-
+            //Debug.Log("creat" + lineIdx);
 
             go.AddComponent<MeshFilter>();
             go.AddComponent<MeshRenderer>();
@@ -74,7 +72,7 @@ public class DrawingManager : MonoBehaviour
             line.originColor = lineColor;
             line.originWidth = lineWidth/2;
 
-            //_line.Add(line);
+            _line.Add(line);
 
             //print("number of line"+_line.Count);
             lineIdx++;
@@ -85,8 +83,11 @@ public class DrawingManager : MonoBehaviour
         {
             //code for delete line from latest
             Destroy(GameObject.Find("line" + --lineIdx));
+            _line[lineIdx].DestroyMesh();
+            _line.RemoveAt(lineIdx);
         }
 
     }
 }
 
+    
