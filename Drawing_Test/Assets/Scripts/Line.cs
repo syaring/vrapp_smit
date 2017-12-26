@@ -124,13 +124,16 @@ namespace Assets
                         _mesh[vtxIdx - 1].gameObject.AddComponent<MeshCollider>();
 
                         rend = _mesh[vtxIdx - 1].GetComponent<Renderer>();
-                        rend.material = new Material(Shader.Find("Transparent/Diffuse"));
+                        //rend.material = new Material(Shader.Find("Transparent/Diffuse"));
+                        rend.material = new Material(Shader.Find("UCLA Game Lab/Wireframe/Double-Sided"));
                         rend.material.color = color;
                         
                         //modify later...(hold)
                         _mesh[vtxIdx - 1].GetComponent<MeshFilter>().mesh.vertices = new Vector3[] { v1, v2, v3, v4 };
                         _mesh[vtxIdx - 1].GetComponent<MeshFilter>().mesh.uv = new Vector2[] { new Vector2(0, 0), new Vector2(0, 1), new Vector2(1, 1), new Vector2(1, 0) };
                         _mesh[vtxIdx - 1].GetComponent<MeshFilter>().mesh.triangles = new int[] { 0, 1, 2, 3, 2, 1, 2, 1, 0, 1, 2, 3 };
+
+                        
 
                     }
                     vtxIdx++;
@@ -139,7 +142,9 @@ namespace Assets
             }
 
             if (OVRInput.GetUp(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.RTouch))
+            {
                 enabled = false;
+            }
 
         }
 
