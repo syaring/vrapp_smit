@@ -16,35 +16,33 @@ namespace Assets
         private List<GameObject> _dotsOClone;
 
         float contState;   //controller state
-        public Color originColor;
-        public float originWidth;
-
         private GameObject rHand;
 
-        private Color color;
+        //for line property
+        public Color originColor;//when test is over, use only originColor
+        public float originWidth;
+        private Color color;    //do not use after test
         private float width;
 
         //for creating mesh
         int vtxIdx;     //vertex Index
         int inputIdx;   //input Index
         Vector3 v1; Vector3 v2; Vector3 v3; Vector3 v4; //mesh vertex
-        GameObject lineMesh;
         List<GameObject> _mesh;
-
         Renderer rend;
 
+        int meshAmount; //inversely to speed, determine the number of meshes
         Vector3 curPos; Vector3 pasPos;
         Vector3 heading;
         float speed = 0;
         Vector3 curDir; Vector3 pasDir;
         static float angle;
 
-        public MeshFilter mf;
-
         public void Awake()
         {
             vtxIdx = 0;
             inputIdx = 0;
+            meshAmount = 5;
 
             rHand = GameObject.FindWithTag("rtouch");
             dotsO = GameObject.FindWithTag("dotsO");
@@ -78,23 +76,32 @@ namespace Assets
             heading = curPos - pasPos; //drawing direction
             speed = heading.magnitude;  //drawing speed
 
+            Debug.Log(speed);
+
             pasDir = curDir;
             curDir = heading;
             //curDir = heading.normalized;
 
             width = originWidth * (1.01f - speed);
-
             color = originColor;
 
+            meshAmount = (int) (0.04f/speed);
+
+            if (meshAmount == 0) //too fast to count meshAmount
+                meshAmount++;
+
+            if (meshAmount > 30) //too slow
+                meshAmount = 30; //minimum mesh create
+            //modify.... if the moving range is smaller than specific value, do not create meshes..
+        
             //for comfirmation, speed up, color changed blue
             if (width < originWidth)
                 color = new Color(0, 0, 255);
 
-            //it is more accurate when calculate the angle of two vectors
+    
             angle = Vector3.Angle(curDir, pasDir);
-
             if (angle > 10.0f || angle < -10.0f)
-                color = new Color(0, 255, 0);
+                color = new Color(0, 255, 0); 
 
 
             if (contState > 0.0f)
@@ -102,9 +109,9 @@ namespace Assets
 
                 inputIdx++;
 
-                //inputIdx determines the number of meshes
-                //inputIdx is smaller, meshes are increase
-                if (inputIdx % 3 == 0)
+                //meshAmount determines the number of meshes
+                //meshAmount is smaller, meshes are increase
+                if (inputIdx % meshAmount == 0)
                 {
 
                     _dotsOClone.Add(Instantiate(dotsO, dotsO.transform.position, contRotation));
@@ -125,7 +132,7 @@ namespace Assets
 
                         rend = _mesh[vtxIdx - 1].GetComponent<Renderer>();
                         //rend.material = new Material(Shader.Find("Transparent/Diffuse"));
-                        rend.material = new Material(Shader.Find("UCLA Game Lab/Wireframe/Double-Sided"));
+                        rend.material = new Material(Shader.Find("UCLA Game Lab/Wireframe/Double-Sided")); //wireframe
                         rend.material.color = color;
                         
                         //modify later...(hold)
@@ -137,7 +144,9 @@ namespace Assets
 
                     }
                     vtxIdx++;
-                    
+
+                    inputIdx = 0;
+
                 }
             }
 
