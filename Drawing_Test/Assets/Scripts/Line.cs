@@ -61,7 +61,7 @@ namespace Assets
         }
 
 
-        public void Update()
+        public void FixedUpdate()
         {
 
             contState = OVRInput.Get(OVRInput.Axis1D.SecondaryIndexTrigger, OVRInput.Controller.Touch);
@@ -69,9 +69,9 @@ namespace Assets
 
             contRotation = rHand.transform.rotation;
 
-            //it is more accurate that using dotsO than using controller for standard
             pasPos = curPos;
-            curPos = dotsO.transform.position;
+            curPos = rHand.transform.position;
+            //curPos = dotsO.transform.position;
      
             heading = curPos - pasPos; //drawing direction
             speed = heading.magnitude;  //drawing speed
@@ -101,7 +101,10 @@ namespace Assets
     
             angle = Vector3.Angle(curDir, pasDir);
             if (angle > 10.0f || angle < -10.0f)
-                color = new Color(0, 255, 0); 
+            {
+                color = new Color(0, 255, 0);
+                meshAmount = 1;
+            }
 
 
             if (contState > 0.0f)
