@@ -10,7 +10,7 @@ namespace Assets
         //using GUI point's center will be same with dotsO's center
         GameObject dotsO;
 
-        private Vector3 originPoint;      //position value of dotsO
+        private Vector3 originPoint;      //position value of dots0
         private Quaternion contRotation;  //rotation value of OVR Controller
 
         private List<GameObject> _dotsOClone;
@@ -19,7 +19,7 @@ namespace Assets
         private GameObject rHand;
 
         //for line property
-        public Color originColor;//when test is over, use only originColor
+        public Color originColor; //when test is over, use only originColor
         public float originWidth;
         private Color color;    //do not use after test
         private float width;
@@ -61,45 +61,48 @@ namespace Assets
         }
 
 
-        public void FixedUpdate()
+        public void Update()
         {
 
             contState = OVRInput.Get(OVRInput.Axis1D.SecondaryIndexTrigger, OVRInput.Controller.Touch);
 
-
             contRotation = rHand.transform.rotation;
 
             pasPos = curPos;
-            curPos = rHand.transform.position;
-            //curPos = dotsO.transform.position;
-     
+            //curPos = rHand.transform.position;
+            curPos = dotsO.transform.position;
+
             heading = curPos - pasPos; //drawing direction
             speed = heading.magnitude;  //drawing speed
 
-            Debug.Log(speed);
+            //Debug.Log(speed);
 
             pasDir = curDir;
             curDir = heading;
-            //curDir = heading.normalized;
 
-            width = originWidth * (1.01f - speed);
+            //width = originWidth * (1.0f - speed*5);
+            width = originWidth;
             color = originColor;
 
-            meshAmount = (int) (0.04f/speed);
+            //create mesh proportional to speed
+            //meshAmount = (int) (0.03f/speed);
 
-            if (meshAmount == 0) //too fast to count meshAmount
-                meshAmount++;
+            //if (meshAmount == 0) //too fast to count meshAmount
+            //    meshAmount++;
 
-            if (meshAmount > 30) //too slow
-                meshAmount = 30; //minimum mesh create
-            //modify.... if the moving range is smaller than specific value, do not create meshes..
-        
-            //for comfirmation, speed up, color changed blue
-            if (width < originWidth)
-                color = new Color(0, 0, 255);
+            //else if (meshAmount > 30) //too slow
+            //    meshAmount = 30; //minimum mesh create
 
+            ////for comfirmation, speed up, color changed blue
+            //if (width < originWidth)
+            //    color = new Color(0, 0, 255);
+
+            //default
+            meshAmount = 20;
     
             angle = Vector3.Angle(curDir, pasDir);
+
+            //at curve position
             if (angle > 10.0f || angle < -10.0f)
             {
                 color = new Color(0, 255, 0);
@@ -112,14 +115,15 @@ namespace Assets
 
                 inputIdx++;
 
-                //meshAmount determines the number of meshes
+                //meshAmount determines the numberz
+                of meshes
                 //meshAmount is smaller, meshes are increase
                 if (inputIdx % meshAmount == 0)
                 {
 
                     _dotsOClone.Add(Instantiate(dotsO, dotsO.transform.position, contRotation));
 
-                    //print(curDir);
+                    //Debug.Log(curDir);
                     _mesh.Add(new GameObject());
          
                     if (vtxIdx > 0)
@@ -148,14 +152,7 @@ namespace Assets
                     }
                     vtxIdx++;
 
-                    inputIdx = 0;
-
                 }
-            }
-
-            if (OVRInput.GetUp(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.RTouch))
-            {
-                enabled = false;
             }
 
         }
