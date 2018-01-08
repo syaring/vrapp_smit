@@ -80,32 +80,32 @@ namespace Assets
             pasDir = curDir;
             curDir = heading;
 
-            //width = originWidth * (1.0f - speed*5);
-            width = originWidth;
+            width = originWidth * (1.01f - speed*10);
+            //width = originWidth;
             color = originColor;
 
             //create mesh proportional to speed
-            //meshAmount = (int) (0.03f/speed);
+            meshAmount = (int)(0.03f / speed);
 
-            //if (meshAmount == 0) //too fast to count meshAmount
-            //    meshAmount++;
+            if (meshAmount == 0) //too fast to count meshAmount
+                meshAmount++;
 
-            //else if (meshAmount > 30) //too slow
-            //    meshAmount = 30; //minimum mesh create
+            else if (meshAmount > 10) //too slow
+                meshAmount = 10; //minimum mesh create
 
-            ////for comfirmation, speed up, color changed blue
-            //if (width < originWidth)
-            //    color = new Color(0, 0, 255);
+            //for comfirmation, speed up, color changed blue
+            if (width < originWidth)
+                color = new Color(0, 0, 255);
 
             //default
             meshAmount = 20;
-    
+
             angle = Vector3.Angle(curDir, pasDir);
 
             //at curve position
             if (angle > 10.0f || angle < -10.0f)
             {
-                color = new Color(0, 255, 0);
+                //color = new Color(0, 255, 0);
                 meshAmount = 1;
             }
 
@@ -115,8 +115,7 @@ namespace Assets
 
                 inputIdx++;
 
-                //meshAmount determines the numberz
-                of meshes
+                //meshAmount determines the number of meshes
                 //meshAmount is smaller, meshes are increase
                 if (inputIdx % meshAmount == 0)
                 {
@@ -128,11 +127,21 @@ namespace Assets
          
                     if (vtxIdx > 0)
                     {
-                        v1 = _dotsOClone[vtxIdx - 1].transform.position - _dotsOClone[vtxIdx - 1].transform.up * width;
-                        v2 = _dotsOClone[vtxIdx - 1].transform.position + _dotsOClone[vtxIdx - 1].transform.up * width;
-                        v3 = _dotsOClone[vtxIdx].transform.position - _dotsOClone[vtxIdx].transform.up * width;
-                        v4 = _dotsOClone[vtxIdx].transform.position + _dotsOClone[vtxIdx].transform.up * width;
-
+                        if(vtxIdx == 1)
+                        {
+                            v1 = _dotsOClone[vtxIdx - 1].transform.position - _dotsOClone[vtxIdx - 1].transform.up * width;
+                            v2 = _dotsOClone[vtxIdx - 1].transform.position + _dotsOClone[vtxIdx - 1].transform.up * width;
+                            v3 = _dotsOClone[vtxIdx].transform.position - _dotsOClone[vtxIdx].transform.up * width;
+                            v4 = _dotsOClone[vtxIdx].transform.position + _dotsOClone[vtxIdx].transform.up * width;
+                        }
+                        else
+                        {
+                            v1 = v3;
+                            v2 = v4;
+                            v3 = _dotsOClone[vtxIdx].transform.position - _dotsOClone[vtxIdx].transform.up * width;
+                            v4 = _dotsOClone[vtxIdx].transform.position + _dotsOClone[vtxIdx].transform.up * width;
+                        }
+    
                         _mesh[vtxIdx - 1].gameObject.AddComponent<MeshFilter>();
                         _mesh[vtxIdx - 1].gameObject.AddComponent<MeshRenderer>();
                         _mesh[vtxIdx - 1].gameObject.AddComponent<MeshCollider>();
