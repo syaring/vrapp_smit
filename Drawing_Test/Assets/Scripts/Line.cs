@@ -80,7 +80,8 @@ namespace Assets
             pasDir = curDir;
             curDir = heading;
 
-            width = originWidth * (1.01f - speed*10);
+            //width = originWidth * (1.01f - speed*50);
+            width = originWidth - speed * 0.9f;
             //width = originWidth;
             color = originColor;
 
@@ -90,12 +91,15 @@ namespace Assets
             if (meshAmount == 0) //too fast to count meshAmount
                 meshAmount++;
 
-            else if (meshAmount > 10) //too slow
-                meshAmount = 10; //minimum mesh create
+            else if (meshAmount > 20) //too slow
+                meshAmount = 20; //minimum mesh create
 
             //for comfirmation, speed up, color changed blue
             if (width < originWidth)
                 color = new Color(0, 0, 255);
+
+
+
 
             //default
             meshAmount = 20;
@@ -155,8 +159,6 @@ namespace Assets
                         _mesh[vtxIdx - 1].GetComponent<MeshFilter>().mesh.vertices = new Vector3[] { v1, v2, v3, v4 };
                         _mesh[vtxIdx - 1].GetComponent<MeshFilter>().mesh.uv = new Vector2[] { new Vector2(0, 0), new Vector2(0, 1), new Vector2(1, 1), new Vector2(1, 0) };
                         _mesh[vtxIdx - 1].GetComponent<MeshFilter>().mesh.triangles = new int[] { 0, 1, 2, 3, 2, 1, 2, 1, 0, 1, 2, 3 };
-
-                        
 
                     }
                     vtxIdx++;

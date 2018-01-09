@@ -78,9 +78,9 @@ public class DrawingManager : MonoBehaviour
         //End Drawing - getup index trigger
         if (OVRInput.GetUp(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.RTouch))
         {
-            if (lineIdx > 0)
+            if (lineIdx > 0) //exception handle
             {
-                Debug.Log("up");
+                //Debug.Log("up");
                 _line[lineIdx - 1].enabled = false;
             }
         }
@@ -88,7 +88,7 @@ public class DrawingManager : MonoBehaviour
         //Delete Line
         if (OVRInput.GetDown(OVRInput.Button.PrimaryHandTrigger, OVRInput.Controller.RTouch))
         {
-            if (lineIdx > 0)
+            if (lineIdx > 0) //exception handle
             {
                 Destroy(GameObject.Find("line" + --lineIdx));
                 _line[lineIdx].DestroyMesh();
