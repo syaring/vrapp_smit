@@ -15,10 +15,19 @@ public class DrawingManager : MonoBehaviour
     float lineWidth;
     Color lineColor;
 
-    static bool stateDraw;
-    static bool thumbStateR, thumbStateL;
+    private bool stateDraw;
+    private bool thumbStateR, thumbStateL;   //thumb stick direction
+    private bool stateA, stateB;
+    private bool stateThumb; //thumb stick button
 
-    
+    //for colorpicker
+    public GameObject ColorPicker;
+    private ColorPickerTriangle cp;
+    private GameObject cpgo;
+    private Material mat;
+    private bool isPick = false;
+
+
     private void Start()
     {
         lineWidth = 0.05f;
@@ -26,13 +35,27 @@ public class DrawingManager : MonoBehaviour
 
         lineIdx = 0;
         _line = new List<Line>();
+
     }
 
     private void Update()
     {
         stateDraw = OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.RTouch);
+
         thumbStateR = OVRInput.GetDown(OVRInput.Button.PrimaryThumbstickRight, OVRInput.Controller.RTouch);
         thumbStateL = OVRInput.GetDown(OVRInput.Button.PrimaryThumbstickLeft, OVRInput.Controller.RTouch);
+
+        stateA = OVRInput.GetDown(OVRInput.Button.One, OVRInput.Controller.RTouch);
+   
+        stateThumb = OVRInput.GetDown(OVRInput.Button.PrimaryThumbstick, OVRInput.Controller.RTouch);
+
+        if (stateA)
+        {
+            if (isPick)
+                StopColorPick();
+            else
+                StartColorPick();
+        }
 
         //change line width
         if (thumbStateR)
@@ -46,13 +69,10 @@ public class DrawingManager : MonoBehaviour
         }
 
         //change color
-        if (Input.GetKeyDown("r"))
-            lineColor = new Color(255, 0, 0);
-        else if (Input.GetKeyDown("g"))
-            lineColor = new Color(0, 255, 0);
-        else if (Input.GetKeyDown("b"))
-            lineColor = new Color(0, 0, 255);
-
+        if (isPick)
+        {
+            lineColor = cp.TheColor;
+        }
 
         //Start drawing - push index trigger
         if (stateDraw) 
@@ -96,6 +116,29 @@ public class DrawingManager : MonoBehaviour
             }
         }
     }
-}
 
-    
+    private void StartColorPick()
+    {
+        //set ColorPicker's position
+        Vector3 pos = GameObject.FindWithTag("dotsO").transform.position;
+        pos += GameObject.FindWithTag("dotsO").transform.forward * 0.1f;
+        Quaternion quat = GameObject.FindWithTag("dotsO").transform.rotation;
+
+        //create ColorPicker Instance
+        cpgo = (GameObject)Instantiate(ColorPicker, pos, quat, Camera.main.transform);
+        cpgo.transform.localScale = Vector3.one * 0.1f;
+        cpgo.transform.LookAt(Camera.main.transform);
+
+        cp = cpgo.GetComponent<ColorPickerTriangle>();
+        cp.SetNewColor(lineColor); //set by current color
+        isPick = true;
+        
+        //GetColorInfo from ColorPickerTriangle
+    }
+
+    private void StopColorPick()
+    {
+        Destroy(cpgo);
+        isPick = false;
+    }
+}

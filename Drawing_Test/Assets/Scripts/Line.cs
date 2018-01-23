@@ -10,7 +10,7 @@ namespace Assets
         //using GUI point's center will be same with dotsO's center
         GameObject dotsO;
 
-        private Vector3 originPoint;      //position value of dots0
+        //private Vector3 originPoint;      //position value of dots0
         private Quaternion contRotation;  //rotation value of OVR Controller
 
         private List<GameObject> _dotsOClone;
@@ -95,8 +95,8 @@ namespace Assets
                 meshAmount = 20; //minimum mesh create
 
             //for comfirmation, speed up, color changed blue
-            if (width < originWidth)
-                color = new Color(0, 0, 255);
+            //if (width < originWidth)
+                //color = new Color(0, 0, 255);
 
 
 
