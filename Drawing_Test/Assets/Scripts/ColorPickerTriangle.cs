@@ -26,31 +26,33 @@ public class ColorPickerTriangle : MonoBehaviour {
 
     private bool MousePressed = false;
 
+    private LineRenderer laser;
+
 	// Use this for initialization
 	void Awake () {
         float h, s, v;
         Color.RGBToHSV(TheColor, out h, out s, out v);
-        //Debug.Log("HSV = " + v.ToString() + "," + h.ToString() + "," + v.ToString() + ", color = " + TheColor.ToString());
         MyPlane = new Plane(transform.TransformDirection(Vector3.forward), transform.position);
         RPoints = new Vector3[3];
         SetTrianglePoints();
         TMesh = Triangle.GetComponent<MeshFilter>().mesh;
         SetNewColor(TheColor);
+
+        laser = gameObject.GetComponent<LineRenderer>();
+        laser.enabled = false;
     }
 	
 	// Update is called once per frame
 	void Update () {
-        //CheckTrianglePosition();
-        //CheckCirclePosition();
 
         if (!MousePressed)
         {
-            ////if (Input.GetMouseButtonDown(0))
-            if(OVRInput.GetDown(OVRInput.Button.PrimaryThumbstick, OVRInput.Controller.RTouch))
+            if(OVRInput.Get(OVRInput.Button.SecondaryThumbstick, OVRInput.Controller.Touch))
             {
                 if (HasIntersection())
                 {
                     MousePressed = true;
+                    laser.enabled = true;
                     CheckTrianglePosition();
                     CheckCirclePosition();
                     return;
@@ -59,11 +61,11 @@ public class ColorPickerTriangle : MonoBehaviour {
         }
         else
         {
-            ////if (Input.GetMouseButtonUp(0) || !Input.GetMouseButton(0) || !HasIntersection())
-            if(OVRInput.GetUp(OVRInput.Button.PrimaryThumbstick, OVRInput.Controller.RTouch) ||
-                              !OVRInput.GetDown(OVRInput.Button.PrimaryThumbstick, OVRInput.Controller.RTouch) ||
-                              !HasIntersection() )
+           if (OVRInput.GetUp(OVRInput.Button.PrimaryThumbstick, OVRInput.Controller.RTouch) ||
+                              !OVRInput.Get(OVRInput.Button.SecondaryThumbstick, OVRInput.Controller.Touch) ||
+                              !HasIntersection())
             {
+                laser.enabled = false;
                 MousePressed = false;
                 StopDrag();
                 return;
@@ -90,8 +92,9 @@ public class ColorPickerTriangle : MonoBehaviour {
         MyPlane = new Plane(transform.TransformDirection(Vector3.forward), transform.position);
 
         ////Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        
         Ray ray = new Ray(GameObject.FindWithTag("dotsO").transform.position, Camera.main.transform.forward);
-
+        
         float rayDistance;
  
         if (MyPlane.Raycast(ray, out rayDistance))
@@ -99,9 +102,14 @@ public class ColorPickerTriangle : MonoBehaviour {
             //Debug.Log("hit");
             
             Vector3 p = ray.GetPoint(rayDistance);
-            //Debug.DrawLine(ray.origin, ray.direction, Color.red, 30.0f);
+
+            laser.enabled = true;
+            laser.SetPosition(0, ray.origin);
+            laser.SetPosition(1, p);
+
             if (Vector3.Distance(p, transform.position) > MainRadius)
                 return false;
+
             CurLocalPos = transform.worldToLocalMatrix.MultiplyPoint(p);
             return true;
         }
@@ -188,7 +196,6 @@ public class ColorPickerTriangle : MonoBehaviour {
         return bary;
     }
 
-
     private void SetTrianglePoints()
     {
         RPoints[0] = Vector3.up * TRadius;
@@ -197,4 +204,6 @@ public class ColorPickerTriangle : MonoBehaviour {
         RPoints[1] = new Vector3 (s, -c, 0) * TRadius;
         RPoints[2] = new Vector3(-s, -c, 0) * TRadius;
     }
+
+
 }

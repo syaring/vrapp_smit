@@ -27,7 +27,6 @@ public class DrawingManager : MonoBehaviour
     private Material mat;
     private bool isPick = false;
 
-
     private void Start()
     {
         lineWidth = 0.05f;
@@ -35,7 +34,6 @@ public class DrawingManager : MonoBehaviour
 
         lineIdx = 0;
         _line = new List<Line>();
-
     }
 
     private void Update()
@@ -121,12 +119,13 @@ public class DrawingManager : MonoBehaviour
     {
         //set ColorPicker's position
         Vector3 pos = GameObject.FindWithTag("dotsO").transform.position;
-        pos += GameObject.FindWithTag("dotsO").transform.forward * 0.1f;
+        pos += Camera.main.transform.forward * 1.0f;
+        //pos += GameObject.FindWithTag("rtouch").transform.forward * 1.0f;
         Quaternion quat = GameObject.FindWithTag("dotsO").transform.rotation;
 
         //create ColorPicker Instance
         cpgo = (GameObject)Instantiate(ColorPicker, pos, quat, Camera.main.transform);
-        cpgo.transform.localScale = Vector3.one * 0.1f;
+        cpgo.transform.localScale = Vector3.one * 0.3f;
         cpgo.transform.LookAt(Camera.main.transform);
 
         cp = cpgo.GetComponent<ColorPickerTriangle>();
