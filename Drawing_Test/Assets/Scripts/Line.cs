@@ -151,10 +151,10 @@ namespace Assets
                         _mesh[vtxIdx - 1].gameObject.AddComponent<MeshCollider>();
 
                         rend = _mesh[vtxIdx - 1].GetComponent<Renderer>();
-                        //rend.material = new Material(Shader.Find("Transparent/Diffuse"));
+                        rend.material = new Material(Shader.Find("Transparent/Diffuse"));
                         //rend.material = new Material(Shader.Find("UCLA Game Lab/Wireframe/Double-Sided")); //wireframe
                         //rend.material = new Material(Shader.Find("FX/Gem"));
-                        rend.material = new Material(Shader.Find("ToonWater/WaterSurface"));
+                        //rend.material = new Material(Shader.Find("ToonWater/WaterSurface"));
                         
                         //rend.material = new Material(Shader.Find("Particles/~Additive-Multiply"));
                         rend.material.color = originColor;

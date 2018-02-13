@@ -100,7 +100,7 @@ public class ColorPickerTriangle : MonoBehaviour {
         if (MyPlane.Raycast(ray, out rayDistance))
         {
             //Debug.Log("hit");
-            
+         
             Vector3 p = ray.GetPoint(rayDistance);
 
             laser.enabled = true;
