@@ -7,26 +7,27 @@ using Assets;
 
 public class DrawingManager : MonoBehaviour
 {
+    //Oculus Touch button input state
+    private bool stateDraw;
+    private bool stateThumbstickR, stateThumbstickL;    //thumb stick direction
+    private bool stateBtnA;
+    private bool stateRTrigger;
 
     int lineIdx;
     Line line;
     List<Line> _line;
-    
     float lineWidth;
     Color lineColor;
 
-    private bool stateDraw;
-    private bool thumbStateR, thumbStateL;   //thumb stick direction
-    private bool stateA, stateB;
-    private bool stateThumb; //thumb stick button
-
     //for colorpicker
     public GameObject ColorPicker;
-    private ColorPickerTriangle cp;
-    private GameObject cpgo;
+    private ColorPickerTriangle colorPickerCmpnt;
+    private GameObject colorPickerGameObject;
     private Material mat;
-    private bool isPick = false;
+    private bool isColorPick = false;
 
+    public GameObject curColor;
+    
     private void Start()
     {
         lineWidth = 0.05f;
@@ -39,38 +40,39 @@ public class DrawingManager : MonoBehaviour
     private void Update()
     {
         stateDraw = OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.RTouch);
+        stateThumbstickR = OVRInput.GetDown(OVRInput.Button.PrimaryThumbstickRight, OVRInput.Controller.RTouch);
+        stateThumbstickL = OVRInput.GetDown(OVRInput.Button.PrimaryThumbstickLeft, OVRInput.Controller.RTouch);
+        stateBtnA = OVRInput.GetDown(OVRInput.Button.One, OVRInput.Controller.RTouch);
+        stateRTrigger = OVRInput.GetDown(OVRInput.Button.PrimaryHandTrigger, OVRInput.Controller.RTouch);
 
-        thumbStateR = OVRInput.GetDown(OVRInput.Button.PrimaryThumbstickRight, OVRInput.Controller.RTouch);
-        thumbStateL = OVRInput.GetDown(OVRInput.Button.PrimaryThumbstickLeft, OVRInput.Controller.RTouch);
 
-        stateA = OVRInput.GetDown(OVRInput.Button.One, OVRInput.Controller.RTouch);
-   
-        stateThumb = OVRInput.GetDown(OVRInput.Button.PrimaryThumbstick, OVRInput.Controller.RTouch);
-
-        if (stateA)
+        //change line width
+        if (stateThumbstickR)
         {
-            if (isPick)
+            lineWidth += 0.01f;
+        }
+
+        if (stateThumbstickL && lineWidth > 0.0f)
+        {
+            lineWidth -= 0.01f;
+        }
+
+
+        if (stateBtnA)
+        {
+            if (isColorPick)
                 StopColorPick();
             else
                 StartColorPick();
         }
 
-        //change line width
-        if (thumbStateR)
+        //change color
+        if (isColorPick)
         {
-            lineWidth += 0.01f;
-        }
-        if (thumbStateL)
-        {
-            if(lineWidth > 0.0f)
-                lineWidth -= 0.01f;
+            lineColor = colorPickerCmpnt.TheColor;
         }
 
-        //change color
-        if (isPick)
-        {
-            lineColor = cp.TheColor;
-        }
+        curColor.GetComponent<MeshRenderer>().material.color = lineColor;
 
         //Start drawing - push index trigger
         if (stateDraw) 
@@ -104,7 +106,7 @@ public class DrawingManager : MonoBehaviour
         }
 
         //Delete Line
-        if (OVRInput.GetDown(OVRInput.Button.PrimaryHandTrigger, OVRInput.Controller.RTouch))
+        if (stateRTrigger)
         {
             if (lineIdx > 0) //exception handle
             {
@@ -117,27 +119,24 @@ public class DrawingManager : MonoBehaviour
 
     private void StartColorPick()
     {
-        //set ColorPicker's position
         Vector3 pos = GameObject.FindWithTag("dotsO").transform.position;
-        pos += Camera.main.transform.forward * 1.0f;
         //pos += GameObject.FindWithTag("rtouch").transform.forward * 1.0f;
+        pos += Camera.main.transform.forward * 1.0f;
         Quaternion quat = GameObject.FindWithTag("dotsO").transform.rotation;
 
-        //create ColorPicker Instance
-        cpgo = (GameObject)Instantiate(ColorPicker, pos, quat, Camera.main.transform);
-        cpgo.transform.localScale = Vector3.one * 0.3f;
-        cpgo.transform.LookAt(Camera.main.transform);
+        colorPickerGameObject = (GameObject)Instantiate(ColorPicker, pos, quat, Camera.main.transform);
+        colorPickerGameObject.transform.localScale = Vector3.one * 0.3f;
+        colorPickerGameObject.transform.LookAt(Camera.main.transform);
 
-        cp = cpgo.GetComponent<ColorPickerTriangle>();
-        cp.SetNewColor(lineColor); //set by current color
-        isPick = true;
+        colorPickerCmpnt = colorPickerGameObject.GetComponent<ColorPickerTriangle>();
+        colorPickerCmpnt.SetNewColor(lineColor); //set by current color
+        isColorPick = true;
         
-        //GetColorInfo from ColorPickerTriangle
     }
 
     private void StopColorPick()
     {
-        Destroy(cpgo);
-        isPick = false;
+        Destroy(colorPickerGameObject);
+        isColorPick = false;
     }
 }

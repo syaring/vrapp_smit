@@ -21,7 +21,7 @@ namespace Assets
         //for line property
         public Color originColor; //when test is over, use only originColor
         public float originWidth;
-        private Color color;    //do not use after test
+        //private Color color;    //do not use after test
         private float width;
 
         //for creating mesh
@@ -83,7 +83,7 @@ namespace Assets
             //width = originWidth * (1.01f - speed*50);
             width = originWidth - speed * 0.9f;
             //width = originWidth;
-            color = originColor;
+            //color = originColor;
 
             //create mesh proportional to speed
             meshAmount = (int)(0.03f / speed);
@@ -96,7 +96,7 @@ namespace Assets
 
             //for comfirmation, speed up, color changed blue
             //if (width < originWidth)
-                //color = new Color(0, 0, 255);
+            //color = new Color(0, 0, 255);
 
 
 
@@ -128,10 +128,10 @@ namespace Assets
 
                     //Debug.Log(curDir);
                     _mesh.Add(new GameObject());
-         
+
                     if (vtxIdx > 0)
                     {
-                        if(vtxIdx == 1)
+                        if (vtxIdx == 1)
                         {
                             v1 = _dotsOClone[vtxIdx - 1].transform.position - _dotsOClone[vtxIdx - 1].transform.up * width;
                             v2 = _dotsOClone[vtxIdx - 1].transform.position + _dotsOClone[vtxIdx - 1].transform.up * width;
@@ -145,16 +145,21 @@ namespace Assets
                             v3 = _dotsOClone[vtxIdx].transform.position - _dotsOClone[vtxIdx].transform.up * width;
                             v4 = _dotsOClone[vtxIdx].transform.position + _dotsOClone[vtxIdx].transform.up * width;
                         }
-    
+
                         _mesh[vtxIdx - 1].gameObject.AddComponent<MeshFilter>();
                         _mesh[vtxIdx - 1].gameObject.AddComponent<MeshRenderer>();
                         _mesh[vtxIdx - 1].gameObject.AddComponent<MeshCollider>();
 
                         rend = _mesh[vtxIdx - 1].GetComponent<Renderer>();
                         //rend.material = new Material(Shader.Find("Transparent/Diffuse"));
-                        rend.material = new Material(Shader.Find("UCLA Game Lab/Wireframe/Double-Sided")); //wireframe
-                        rend.material.color = color;
+                        //rend.material = new Material(Shader.Find("UCLA Game Lab/Wireframe/Double-Sided")); //wireframe
+                        //rend.material = new Material(Shader.Find("FX/Gem"));
+                        rend.material = new Material(Shader.Find("ToonWater/WaterSurface"));
                         
+                        //rend.material = new Material(Shader.Find("Particles/~Additive-Multiply"));
+                        rend.material.color = originColor;
+
+
                         //modify later...(hold)
                         _mesh[vtxIdx - 1].GetComponent<MeshFilter>().mesh.vertices = new Vector3[] { v1, v2, v3, v4 };
                         _mesh[vtxIdx - 1].GetComponent<MeshFilter>().mesh.uv = new Vector2[] { new Vector2(0, 0), new Vector2(0, 1), new Vector2(1, 1), new Vector2(1, 0) };
@@ -171,7 +176,7 @@ namespace Assets
         public void DestroyMesh()
         {
             //temporary
-            for(int i = 0; i < _dotsOClone.Count; i++)
+            for (int i = 0; i < _dotsOClone.Count; i++)
             {
                 Destroy(_dotsOClone[i]);
                 Destroy(_mesh[i]);
