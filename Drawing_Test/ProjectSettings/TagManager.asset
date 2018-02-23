@@ -8,6 +8,9 @@ TagManager:
   - dotsO
   - dotsM
   - dotsP
+  - cp
+  - colorTriangle
+  - colorCircle
   layers:
   - Default
   - TransparentFX

@@ -82,8 +82,7 @@ namespace Assets
 
             //width = originWidth * (1.01f - speed*50);
             width = originWidth - speed * 0.9f;
-            //width = originWidth;
-            //color = originColor;
+       
 
             //create mesh proportional to speed
             meshAmount = (int)(0.03f / speed);
@@ -93,11 +92,6 @@ namespace Assets
 
             else if (meshAmount > 20) //too slow
                 meshAmount = 20; //minimum mesh create
-
-            //for comfirmation, speed up, color changed blue
-            //if (width < originWidth)
-            //color = new Color(0, 0, 255);
-
 
 
 
@@ -150,12 +144,15 @@ namespace Assets
                         _mesh[vtxIdx - 1].gameObject.AddComponent<MeshRenderer>();
                         _mesh[vtxIdx - 1].gameObject.AddComponent<MeshCollider>();
 
+
                         rend = _mesh[vtxIdx - 1].GetComponent<Renderer>();
-                        rend.material = new Material(Shader.Find("Transparent/Diffuse"));
+                        
+                        rend.material = new Material(Shader.Find("Diffuse"));
+
                         //rend.material = new Material(Shader.Find("UCLA Game Lab/Wireframe/Double-Sided")); //wireframe
                         //rend.material = new Material(Shader.Find("FX/Gem"));
                         //rend.material = new Material(Shader.Find("ToonWater/WaterSurface"));
-                        
+
                         //rend.material = new Material(Shader.Find("Particles/~Additive-Multiply"));
                         rend.material.color = originColor;
 
